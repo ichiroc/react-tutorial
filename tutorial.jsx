@@ -1,3 +1,9 @@
+var data = [
+    {id: 1, author: "Pete Hunt", text: "This is one comment"},
+    {id: 2, author: "Jordan Walke", text: "This is *another* comment"},
+    {id: 3, author: "Ichiro", text: "This is **yet another** comment"},
+];
+
 var CommentBox = React.createClass({
     render: function(){
         return(
@@ -8,6 +14,24 @@ var CommentBox = React.createClass({
         );
     }
 });
+
+var CommentList = React.createClass({
+    render: function(){
+        var commentNodes = this.props.data.map(function(comment){
+            return(
+                    <Comment author={comment.author} key={comment.id}>
+                    {comment.text}
+                </Comment>
+            );
+        });
+        return(
+                <div className="commentList">
+                {commentNodes}
+            </div>
+        );
+    }
+});
+
 var Comment = React.createClass({
     rawMarkup: function(){
         var md = new Remarkable();
@@ -26,24 +50,7 @@ var Comment = React.createClass({
     }
 });
 
-var CommentList = React.createClass({
-    render: function(){
-        return(
-                <div className="commentList">
-                <Comment author="Pete Hunt">This is one comment</Comment>
-                <Comment author="Jordan Walke">This is *another* comment</Comment>
-                </div>
-        );
-    }
-});
-
 ReactDOM.render(
         <CommentBox data={data} />,
     document.getElementById("content")
 );
-
-
-var data = [
-    {id: 1, author: "Pete Hunt", text: "This is one comment"},
-    {id: 2, author: "Jordan Walke", text: "This is *another* comment"},
-];
