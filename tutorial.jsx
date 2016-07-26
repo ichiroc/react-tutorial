@@ -17,6 +17,7 @@ var CommentBox = React.createClass({
     },
     handleCommentSubmit:function(comment){
         var comments = this.state.data;
+        comment.id = new Date();
         comments = comments.concat([comment]);
         this.setState({data: comments});
         $.ajax({
@@ -51,7 +52,7 @@ var CommentList = React.createClass({
     render: function(){
         var commentNodes = this.props.data.map(function(comment){
             return(
-                    <Comment author={comment.author} key={comment.id}>
+                    <Comment author={comment.author} email={comment.email} key={comment.id}>
                     {comment.text}
                 </Comment>
             );
@@ -76,6 +77,7 @@ var Comment = React.createClass({
                 <h2 className="commentAuthor">
                 {this.props.author}
             </h2>
+                <div className="email">{this.props.email}</div>
                 <span dangerouslySetInnerHTML={this.rawMarkup()}/>
                 </div>
         );
@@ -84,7 +86,7 @@ var Comment = React.createClass({
 
 var CommentForm = React.createClass({
     getInitialState : function(){
-        return {author: '', text: ''};
+        return {author: '', email:'', text: ''};
     },
     handleAuthorChange: function(e){
         this.setState({author: e.target.value});
@@ -92,20 +94,25 @@ var CommentForm = React.createClass({
     handleTextChange: function(e){
         this.setState({text: e.target.value});
     },
+    handleEmailChange: function(e){
+        this.setState({email: e.target.value});
+    },
     handleSubmit: function(e){
         e.preventDefault();
         var author = this.state.author.trim();
         var text = this.state.text.trim();
-        if(!text || !author){
+        var email = this.state.email.trim();
+        if(!text || !autho || !email){
             return;
         }
-        this.props.onCommentSubmit({author: author, text: text});
+        this.props.onCommentSubmit({author: author, email: email, text: text});
         this.setState({author: '', text: ''});
     },
     render: function(){
         return(
                 <form className="commentForm" onSubmit={this.handleSubmit}>
                 <input type="text" placeholder="Your name" value={this.state.author} onChange={this.handleAuthorChange} />
+                <input type="email" placeholder="Your email" value={this.state.email} onChange={this.handleEmailChange} />
                 <input type="text" placeholder="Say something..." value={this.state.text} onChange={this.handleTextChange} />
                 <input type="submit" value="Post" />
                 </form>
@@ -114,6 +121,6 @@ var CommentForm = React.createClass({
 });
 
 ReactDOM.render(
-        <CommentBox url="api/comments" pollInterval={2000} />,
+        <CommentBox url="api/comments" pollInterval={10000} />,
     document.getElementById("content")
 );
