@@ -8,7 +8,22 @@ var CommentBox = React.createClass({
             dataType: 'json',
             cache: false,
             success: function(data){
-                this.setState({data:data});
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    handleCommentSubmit:function(comment){
+        // TODO: sumit to the server and refresh the list
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            type: 'POST',
+            data: comment,
+            success: function(data){
+                this.setState({data: data});
             }.bind(this),
             error: function(xhr, status, err){
                 console.error(this.props.url, status, err.toString());
@@ -23,8 +38,8 @@ var CommentBox = React.createClass({
         return(
                 <div className="commentBox">
                 <h1>Comments</h1>
-                <CommentForm />
                 <CommentList data={this.state.data} />
+                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
                 </div>
         );
     }
@@ -82,6 +97,7 @@ var CommentForm = React.createClass({
         if(!text || !author){
             return;
         }
+        this.props.onCommentSubmit({author: author, text: text});
         this.setState({author: '', text: ''});
     },
     render: function(){
